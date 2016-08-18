@@ -1,6 +1,6 @@
 BUILD_DIR=build
-TITLE=Slides
-DESTINATION=casa@sweetohm.net:/home/web/slides/slides
+TITLE=Migration de Base de Données
+DESTINATION=casa@sweetohm.org:/home/web/slides/db-migration
 
 YELLOW=\033[1m\033[93m
 CYAN=\033[1m\033[96m
