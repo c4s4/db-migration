@@ -9,15 +9,11 @@ casa@sweetohm.net
 Proposition
 -----------
 
-Michel Développeur à 50 ans
+Migration de base de données
 
-On s'étonne souvent du jeune âge des développeurs. Que deviennent-ils passé quarante ans ? Existe-t-il un cimetière des éléphants pour les développeurs ? Non ! Il est possible de rester développeur passé quarante ans, et même de très bien le/en vivre !
+Les scripts de base de données sont trop souvents la cinquième roue du carrosse, relégués en vrac dans un coin du projet. Or, projet bien ordonné commence par la base de données !
 
-Cette conférence présentera le parcours de Michel, hypothétique développeur de cinquante ans :
-
-- Les alternatives qui se sont présentées à lui.
-- Comment il a géré sa carrière.
-- Comment il a su rester compétitif.
+Cette conférence présente db_migration (http://github.com/c4s4/db_migration) un outil de migration de base de données mis en œuvre avec succès chez Orange et SQLI.
 
 ---
 Slides Template Project
