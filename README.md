@@ -89,6 +89,23 @@ On en vient alors à la conclusion qu'il faudrait un programme :
 - Installer des scripts spécifiques aux plateformes.
 - Gérer une migratiin entre versions.
 
+Donc lorsqu'on l'appelle, il faudrait lui passer :
+
+- La version à installer.
+- La plateforme cible.
+
+Connaissant les versions installée et cible, le programme en déduit les répertoires à passer. Connaissant la plateforme cible, il est capable de sélectionner les scripts des répertoires à passer.
+
+---
+# Autres contraintes
+
+Les exploitants des plateformes ont l'habitude de passer les scripts avec les outils fournis par le développeur le la base de données (*mysql* pour les bases MySQL et *sqlplus* pour Oracle).
+
+Par conséquent, pour limiter les risques d'incompatibilité, il faudrait que cette application appelle ces outils en ligne de commande.
+
+---
+
+
 
 
 
