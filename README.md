@@ -1,3 +1,4 @@
+
 Migration de Base de Données
 ============================
 
@@ -56,6 +57,37 @@ C'est souvent le la situation dans laquelle se trouvent la pluspart des projets 
 # Organisation des scripts
 
 Lorsqu'on applique ces principes de gestion des données, on en vient logiquement à organiser les scripts SQL de la manière suivante :
+
+- Un répertoire d'initialisation permettant de créer la base.
+- Un répertoire par version du logiciel comportant une modification du schéma ou des données.
+- Des scripts par plateforme (test, préprod ou production) pour les données spécifiques.
+
+Pour installer une nouvelle plateforme, on passera d'abord les scripts d'initialisation, puis les scripts des versions jusqu'à la version à installer.
+
+Dans le répertoire d'une version, on passera les scripts communs à toutes les plateformes puis les scripts spécifiques.
+
+---
+# Automatisation des scripts
+
+Passer ces scripts à la main s'avère vite pénible et source d'erreurs.
+
+Se pause alors la question de l'automatisation du passage de ces scripts.
+
+La solution d'un script *all.sql*, qui appelke tous les autres scripts, est la plus mais présente les inconvénients suivants :
+
+- Il faut ajouter à la main tout nouveau script.
+- On ne peut installer une version arbitraire de la base, mais toujours la dernière.
+- On ne peut passer des scripts pour une plateforme spécifiquement.
+- On doit écrire des scripts spécifiques pour toute migration.
+
+---
+# Automatisation par programme
+
+On en vient alors à la conclusion qu'il faudrait un programme :
+
+- Qui puisse installer n'importe quelle version de la base.
+- Installer des scripts spécifiques aux plateformes.
+- Gérer une migratiin entre versions.
 
 
 
