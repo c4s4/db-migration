@@ -35,13 +35,28 @@ Ce stade où toutes les données sont dans la base est le degré zéro de la ges
 
 On s'expose alors aux risques suivants :
 
-- Pertes de données en cas de crash de la base.
-- Perméabilité des données entre plateformes (données de test en production et inversement).
-- L'installation d'une nouvelle base est un processus compliqué, long et risqué, ce qui limite la capacité à tester.
+- **Pertes de données** en cas de crash de la base.
+- **Perméabilité des données** entre plateformes (données de test en production et inversement).
+- **L'installation d'une nouvelle base** est un processus compliqué, long et risqué, ce qui limite la capacité à tester.
 
 Malheureusement on rencontre encore cette situation très fréquemment.
 
 ---
+# La première étape
+
+Lorsqu'on veut gérer sérieusement les données d'une base, on comprend rapidement qu'il faut écrire dans des scripts SQL :
+
+- **Le schéma** des bases de données.
+- **Les données** pour toutes les plateformes.
+- **Toute modification du schéma** de la base.
+
+C'est souvent le la situation dans laquelle se trouvent la pluspart des projets un tant soit peu sérieux.
+
+---
+# Organisation des scripts
+
+Lorsqu'on applique ces principes de gestion des données, on en vient logiquement à organiser les scripts SQL de la manière suivante :
+
 
 
 
