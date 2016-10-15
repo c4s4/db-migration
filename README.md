@@ -112,8 +112,29 @@ Par conséquent, en 2008 chez Orange, moi et d'autres collègues (en particulier
 
 Cet outil est utilisé chez Orange depuis 2008 et SQLI depuis 2015.
 
----
+Il est en Open Source, disponible sur Github : <http://github.com/c4s4/db_migration>.
 
+---
+# Organisation des scripts
+
+Comme indiqué ci-dessus, les scripts SQL sont placés dans des répertoires par version du logiciel :
+
+    .
+    ├── 0.1
+    │     ├── all.sql
+    │     └── itg.sql
+    ├── 0.2
+    │     └── all.sql
+    ├── db_configuration.py
+    └── init
+          ├── all.sql
+          ├── itg.sql
+          ├── prod.sql
+          └── prp.sql
+
+Dans ce cas, nous avons deux répertoires de version : *0.1* et *0.2*. Le répertoire init contient les scripts d'initialisation de la base de données.
+
+---
 
 
 
