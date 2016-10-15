@@ -135,21 +135,21 @@ Comme indiqué ci-dessus, les scripts SQL sont placés dans des répertoires par
 Dans ce cas, nous avons deux répertoires de version : *0.1* et *0.2*. Le répertoire init contient les scripts d'initialisation de la base de données.
 
 ---
+# Versions supportées
 
+Les versions doivent être de la forme *x.y.z*, avec autant de parties que nécessaires entre les points. Donc *1*, *1.2* et *1.2.3.4.5.6* sont valides. Par contre *1.2-rc3* ne l'est pas.
 
+Les chiffres peuvent commencer par des zéros, donc *01.02.03* est valide et strictement équivalent à *1.2.3*.
 
+Les versions sont triées en enlevant les zéros et l'absence de chiffre passe avant tout chiffre. Donc *1*, *02.03.04*, *2.3* seront triés comme suit : *1*, *2.3*, *02.03.04*.
 
+---
+# Scripts de plateformes
 
+Les scripts *all-\*.sql* seront exévutés sur toutes les plateformes, dans l'ordres *lexicographique*, donc *all-10.sql* sera exécutés avant *all-2.sql*. On doit donc numéroter avec des zéros devant si nécessaire.
 
+Les autres que ceux commençant par autre chose que *all-* seront exécutés sur les plateformes du même nom *après* les scripts *all\*.sql*. Le nom des plateformes est libre et liusté fans le fichier de configuration.
 
+Par conséquent si un répertoire de version contient les scripts de version *all.sql*, *foo.sql* et *bar.sql*, alors les scripts *all.sql*, puis *foo.sql* seront exécutés pour migrer la plateforme *foo*.
 
-
-
-
-
-
-
-
-
-
-
+---
