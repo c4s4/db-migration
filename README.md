@@ -121,10 +121,10 @@ Comme indiqué ci-dessus, les scripts SQL sont placés dans des répertoires par
 
     .
     ├── 0.1
-    │     ├── all.sql
-    │     └── itg.sql
+    │    ├── all.sql
+    │    └── itg.sql
     ├── 0.2
-    │     └── all.sql
+    │    └── all.sql
     ├── db_configuration.py
     └── init
           ├── all.sql
