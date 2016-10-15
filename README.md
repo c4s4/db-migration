@@ -104,6 +104,22 @@ Les exploitants des plateformes ont l'habitude de passer les scripts avec les ou
 Par conséquent, pour limiter les risques d'incompatibilité, il faudrait que cette application appelle ces outils en ligne de commande.
 
 ---
+# DB Migration
+
+Nous avons cherché un outil répondant à toutes ces contraintes mais n'en avons trouvé aucun. Ceux que nous avons trouvé utilisaient pour passer les scripts, des drivers spécifiques (comme Flyway par exemple, qui utilise le driver JDBC Java).
+
+Par conséquent, en 2008 chez Orange, moi et d'autres collègues (en particulier ) avons développé un outil en interne appelé *db_migration*. Il a été développé en Python et supportait MySQL. En 2015 le support a été étendu à Oracle.
+
+Cet outil est utilisé chez Orange depuis 2008 et SQLI depuis 2015.
+
+---
+
+
+
+
+
+
+
 
 
 
