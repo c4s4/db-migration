@@ -35,7 +35,7 @@ Entendu il y a 4 ans en arrivant sur un projet :
 ---
 # Le degré Zéro
 
-Ce stade où toutes les données sont dans la base est le degré zéro de la gestion de la base de données.
+Ce stade, où toutes les données sont dans la base, est le degré zéro de la gestion de données.
 
 On s'expose alors aux risques suivants :
 
@@ -43,7 +43,7 @@ On s'expose alors aux risques suivants :
 - **Perméabilité des données** entre plateformes (données de test en production et inversement).
 - **L'installation d'une nouvelle base** est un processus compliqué, long et risqué, ce qui limite la capacité à tester.
 
-Malheureusement on rencontre encore cette situation très fréquemment.
+Malheureusement on rencontre encore cette situation trop fréquemment.
 
 ---
 # La première étape
@@ -53,6 +53,8 @@ Lorsqu'on veut gérer sérieusement les données d'une base, on comprend rapidem
 - **Le schéma** des bases de données.
 - **Les données** pour toutes les plateformes.
 - **Les scripts de migration du schéma** de la base.
+
+D'autre part, pour pouvoir faire évoluer le schéma en production sans perdre de données, il ne faut écrire que des scripts de migration du schéma. On ne doit pas redéfinir une table existante, on doit la faire évoluer.
 
 C'est souvent la situation dans laquelle se trouvent la plupart des projets.
 
@@ -90,36 +92,36 @@ La solution du script *main.sql*, qui appelle tous les autres scripts, est la pl
 
 On en vient alors à la conclusion qu'il faudrait un programme :
 
-- Qui puisse installer n'importe quelle version de la base.
-- Installer des scripts spécifiques aux plateformes.
-- Gérer une migration entre versions.
+- Qui puisse installer **n'importe quelle version** de la base.
+- Installer des **scripts spécifiques aux plateformes**.
+- Gérer une **migration entre versions**.
 
 Donc lorsqu'on l'appelle, il faudrait lui passer :
 
-- La version à installer.
 - La plateforme cible.
+- La version à installer.
 
-Connaissant les versions installée et cible, le programme en déduit les répertoires à passer. Connaissant la plateforme cible, il est capable de sélectionner les scripts des répertoires à passer.
+Connaissant les versions installée et cible, le programme en déduit les répertoires à passer. Connaissant la plateforme cible, il est capable de sélectionner les scripts à passer dans les répertoires.
 
 ---
 # Autres contraintes
 
-Les exploitants des plateformes ont l'habitude de passer les scripts avec les outils fournis par le fournisseur le la base de données (*mysql* pour MySQL et *sqlplus* pour Oracle).
+Les exploitants des plateformes ont l'habitude de passer les scripts avec les outils du fournisseur le la base de données (*mysql* pour MySQL et *sqlplus* pour Oracle).
 
 Par conséquent, pour limiter les risques d'incompatibilité, il faudrait que cette application appelle ces outils en ligne de commande.
 
-Ilest alors possible de revenir à la solution manuelle sans modifier les scripts existants. Il est aussi possible d'automatiser la migration sur les plateformes de développement et de garder la solution manuelle en production.
+Il est alors possible de revenir à la solution manuelle sans modifier les scripts existants. Il est aussi possible d'automatiser la migration sur les plateformes de développement et de garder la solution manuelle en production.
 
 ---
 # DB Migration
 
-Nous avons cherché un outil répondant à toutes ces contraintes mais n'en avons trouvé aucun. Ceux que nous avons trouvé utilisaient pour passer les scripts, des drivers spécifiques (comme Flyway par exemple, qui utilise le driver JDBC Java).
+Nous avons cherché un outil répondant à toutes ces contraintes mais n'en avons trouvé aucun. Ceux que nous avons trouvé utilisaient, pour passer les scripts, des drivers spécifiques (comme Flyway par exemple, qui utilise le driver JDBC Java).
 
-Par conséquent, en 2008 chez Orange, moi et d'autres collègues (en particulier *Grégoire Deveaux* chez Orange) avons développé un outil en interne appelé *db_migration*. Il a été développé en Python et supportait MySQL. En 2015 le support a été étendu à Oracle.
+Par conséquent, en 2008 chez Orange, moi et d'autres collègues (en particulier *Grégoire Deveaux*) avons développé un outil en interne appelé *db_migration*. Il a été développé en Python et supportait MySQL. En 2015 le support a été étendu à Oracle.
 
 Cet outil est utilisé chez Orange depuis 2008 et SQLI depuis 2015.
 
-Il est en Open Source, disponible sur Github : <http://github.com/c4s4/db_migration>.
+Il est en Open Source (sous [licence Apache](http://www.apache.org/licenses/LICENSE-2.0)), disponible sur Github : <http://github.com/c4s4/db_migration>.
 
 ---
 # Organisation des scripts
@@ -133,7 +135,6 @@ Comme indiqué ci-dessus, les scripts SQL sont placés dans des répertoires par
 │   └── itg.sql
 ├── 1.0
 │   └── all.sql
-├── db_configuration.py
 └── init
     ├── all.sql
     ├── itg.sql
@@ -142,14 +143,18 @@ Comme indiqué ci-dessus, les scripts SQL sont placés dans des répertoires par
 
 Dans ce cas, nous avons deux répertoires de version : *0.1* et *1.0*. Le répertoire init contient les scripts d'initialisation de la base de données.
 
+Chaque répertoire contient les scripts à passer sur toutes les plateformes (les schémas en général), commençant par *all*, et les autres, spécifiques à chaque plateforme (contenant en général des données).
+
 ---
 # Versions supportées
 
-Les versions doivent être de la forme *x.y.z*, avec autant de parties que nécessaires entre les points. Donc *1*, *1.2* et *1.2.3.4.5.6* sont valides. Par contre *1.2-rc3* ne l'est pas.
+Les versions doivent être de la forme *1.2.3*, avec autant de groupes que nécessaires. Donc *1*, *1.2* et *1.2.3.4.5.6* sont valides. Par contre *1.2-rc3* ne l'est pas.
 
 Les chiffres peuvent commencer par des zéros, donc *01.02.03* est valide et strictement équivalent à *1.2.3*.
 
-Les versions sont triées en enlevant les zéros et l'absence de chiffre passe avant tout chiffre. Donc *1*, *02.03.04*, *2.3* seront triés comme suit : *1*, *2.3*, *02.03.04*.
+Les versions sont triées par ordre *numérique*, donc *1.10* vient après *1.2*. L'absence de chiffre passant avant tout chiffre, donc *1* passe avant *1.0*.
+
+Ainsi, *1*, *02.03.04* et *2.3* seront triés comme suit : *1*, *2.3* puis *02.03.04*.
 
 ---
 # Scripts de plateformes
