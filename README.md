@@ -21,14 +21,14 @@ Cette conférence présente db_migration (http://github.com/c4s4/db_migration) u
 
 Entendu il y a encore un an :
 
-```
+```python
 - La base Oracle de test a crashé, ils ont perdu toutes les
   données de test. Tous leurs tests sont inutilisables maintenant.
 ```
 
 Enetendu il y a 4 ans en arrivant sur un projet :
 
-```
+```python
 - Comment on va faire la mise en production de la base de données ?
 - On fera un dump de la pré-production.
 ```
