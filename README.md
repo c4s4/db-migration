@@ -1,4 +1,3 @@
-
 Migration de Base de Données
 ============================
 
@@ -12,9 +11,9 @@ Proposition
 
 Migration de base de données
 
-Les scripts de base de données sont trop souvents la cinquième roue du carrosse, relégués en vrac dans un coin du projet. Or, projet bien ordonné commence par la base de données !
+Les scripts de base de données sont trop souvent la cinquième roue du carrosse, relégués en vrac dans un coin du projet. Or, projet bien ordonné commence par la base de données !
 
-Cette conférence présente db_migration (http://github.com/c4s4/db_migration) un outil de migration de base de données mis en œuvre avec succès chez Orange et SQLI.
+Cette conférence présente *db_migration* (http://github.com/c4s4/db_migration) un outil de migration de base de données mis en œuvre avec succès chez Orange et SQLI.
 
 ---
 # Entendu
@@ -26,7 +25,7 @@ Entendu il y a encore un an :
   données de test. Tous leurs tests sont inutilisables maintenant.
 ```
 
-Enetendu il y a 4 ans en arrivant sur un projet :
+Entendu il y a 4 ans en arrivant sur un projet :
 
 ```python
 - Comment on va faire la mise en production de la base de données ?
@@ -53,7 +52,7 @@ Lorsqu'on veut gérer sérieusement les données d'une base, on comprend rapidem
 
 - **Le schéma** des bases de données.
 - **Les données** pour toutes les plateformes.
-- **Les sctipts de migration du schéma** de la base.
+- **Les scripts de migration du schéma** de la base.
 
 C'est souvent la situation dans laquelle se trouvent la plupart des projets.
 
@@ -87,13 +86,13 @@ La solution du script *main.sql*, qui appelle tous les autres scripts, est la pl
 - On doit écrire un script *main.sql* spécifique pour toute migration.
 
 ---
-# Automatisation par programme
+# Contraintes
 
 On en vient alors à la conclusion qu'il faudrait un programme :
 
 - Qui puisse installer n'importe quelle version de la base.
 - Installer des scripts spécifiques aux plateformes.
-- Gérer une migratiin entre versions.
+- Gérer une migration entre versions.
 
 Donc lorsqu'on l'appelle, il faudrait lui passer :
 
@@ -127,19 +126,21 @@ Il est en Open Source, disponible sur Github : <http://github.com/c4s4/db_migrat
 
 Comme indiqué ci-dessus, les scripts SQL sont placés dans des répertoires par version du logiciel :
 
-    .
-    ├── 1.0.0
-    │    ├── all.sql
-    │    └── itg.sql
-    ├── 1.1.0
-    │    └── all.sql
-    ├── db_configuration.py
-    └── init
-          ├── all.sql
-          ├── itg.sql
-          └── prod.sql
+```python
+.
+├── 0.1
+│   ├── all.sql
+│   └── itg.sql
+├── 1.0
+│   └── all.sql
+├── db_configuration.py
+└── init
+    ├── all.sql
+    ├── itg.sql
+    └── prod.sql
+```
 
-Dans ce cas, nous avons deux répertoires de version : *1.0.0* et *1.1.0*. Le répertoire init contient les scripts d'initialisation de la base de données.
+Dans ce cas, nous avons deux répertoires de version : *0.1* et *1.0*. Le répertoire init contient les scripts d'initialisation de la base de données.
 
 ---
 # Versions supportées
@@ -153,13 +154,150 @@ Les versions sont triées en enlevant les zéros et l'absence de chiffre passe a
 ---
 # Scripts de plateformes
 
-Les scripts commençant par *all* seront exécutés sur toutes les plateformes, dans l'ordres *lexicographique*, donc *all-10.sql* sera exécutés avant *all-2.sql*. On doit donc numéroter avec des zéros si nécessaire.
+Les scripts commençant par *all* seront exécutés sur toutes les plateformes, dans l'ordre *lexicographique*, donc *all-10.sql* sera exécutés avant *all-2.sql*. On doit donc numéroter avec des zéros si nécessaire.
 
 Les autres scripts seront exécutés sur les plateformes du même nom *après* les scripts *all-xxx.sql*. Le nom des plateformes est libre et listé fans le fichier de configuration.
 
 Par conséquent si un répertoire de version contient les scripts  *all.sql*, *foo.sql* et *bar.sql*, alors les scripts *all.sql*, puis *foo.sql* seront exécutés pour migrer la plateforme *foo*.
 
 ---
+# Exemples
+
+Pour initialiser la base de données en intégration et l'amener à la version *0.1*, on tapera la ligne de commande :
+
+```bash
+$ db_migration -i itg 0.1
+on '0.1' on platform 'itg'
+Using base 'test' as user 'test'
+Creating meta tables... OK
+Listing passed scripts... OK
+Running 4 migration scripts... OK
+```
+
+Pour effectuer la migration de la plateforme *itg* vers la version *1.0* :
+
+```bash
+$ db_migration itg 1.0
+on '1.0' on platform 'itg'
+Using base 'test' as user 'test'
+Creating meta tables... OK
+Listing passed scripts... OK
+Running 1 migration scripts... OK
+```
+
+---
+# Dry run
+
+On peut voir les scripts passés avec l'option *dry_run* :
+
+```bash
+$ db_migration -d -i itg 1.0
+Version '1.0' on platform 'itg'
+Using base 'test' as user 'test'
+Creating meta tables... OK
+Listing passed scripts... OK
+5 scripts to run:
+- init/all.sql
+- init/itg.sql
+- 0.1/all.sql
+- 0.1/itg.sql
+- 1.0/all.sql
+```
+
+---
+# Méta données
+
+*db_migration* connait la version installée grâce à deux une table *_install* :
+
+```python
++----+---------+------------------+------------------+---------+
+| id | version | start_date       | end_date         | success |
++----+---------+------------------+------------------+---------+
+|  1 | 0.1     | 2012-04-18 14... | 2012-04-18 14... |       1 |
+|  2 | 1.0     | 2012-04-18 14... | 2012-04-18 14... |       1 |
++----+---------+------------------+------------------+---------+
+```
+
+*db_migration* connait les scripts déjà passés grâce à la table *_scripts* :
+
+```python
++--------------+---------------------+---------+------------+---------------+
+| filename     | install_date        | success | install_id | error_message |
++--------------+---------------------+---------+------------+---------------+
+| init/all.sql | 2012-04-18 14:17:20 |       1 |          1 | NULL          |
+| init/itg.sql | 2012-04-18 14:17:20 |       1 |          1 | NULL          |
+| 0.1/all.sql  | 2012-04-18 14:17:20 |       1 |          1 | NULL          |
++--------------+---------------------+---------+------------+---------------+
+```
+
+---
+# Développement
+
+Lors du développement, on mettra ses scripts dans un répertoire appelé *next*. Les scripts de ce répertoire sont passés avec l'option `-a` (pour *all*), qui passe tous les scripts de migration.
+
+Lorsqu'on effectue une release, on mergera les scripts présents dans le répertoire *next* et on le renommera avec le numéro de la release.
+
+Ainsi, on évite les problèmes des problème de merges sur une ancienne version.
+
+---
+# Scripts de migration
+
+Parfois, il est utile de générer des scripts de migration d'une version vers une autre. On peut alors utiliser l'option `-m version`. Par exemple, pour générer le script de migration de la version *0.1* vers *1.0*, on tapera la commande :
+
+```bash
+$ db_migration -m 0.1 itg 1.0
+-- Migration base 'test' on platform 'itg'
+-- From version '0.1' to '1.0'
+
+USE `test`;
+
+-- Script '1.0/all.sql'
+INSERT INTO pet
+  (name, age, species)
+VALUES
+  ('Nico', 7, 'beaver');
+
+COMMIT;
+```
+
+On pourra utiliser ce script pour migrer la base de données *à la main*.
+
+---
+# Précautions
+
+L'utilisation de *db_migration* nécessite un certain nombre de précautions :
+
+- *db_migration* ne gère pas les retours arrières.
+- Il faut donc effectuer un **dump** de la base avant d'effectuer la migration.
+- Il ne faut **jamais** modifier un script d'une version antérieure.
+- Il faut prendre garde à ne pas laisser de commentaire ouvert en fin de script (`/*`).
+
+---
+# Fonctionnement interne
+
+En interne, *db_migration* fonctionne de la manière suivante :
+
+- Il sélectionne les répertoires des versions à passer.
+- Il sélectionne les scripts à passer en fonction de la plateforme à installer.
+- Il génère un script de migration par concaténation des scripts de migration.
+
+En plus des scripts de migration, *db_migration* ajoute du code SQL pour :
+
+- Commmiter après le passage d'un script.
+- Peupler les tables de méta-données.
+
+---
+# Ce qu'apporte *db_migration*
+
+En utilisant *db_migration* :
+
+- On peut migrer *automatiquement* la base de données lors de l'installation d'un logiciel.
+- On peut automatiser le passage des scripts Oracle, sans avoir à vérifier ligne à ligne les logs Oracle
+
+
+
+
+
 
 
 
