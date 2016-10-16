@@ -311,7 +311,10 @@ ligne à ligne les logs à la recherche d'éventuelles erreurs.
 
 En effet, Si les scripts de migration contiennent des erreurs, la valeur de retour de *sqlplus* n'est pas nécessairement différente de *0*. Pour être certain qu'il ne s'est produit aucune erreur, il faut donc parcourir tous les logs, *à la main*. *db_migration* le fait pour nous et nous affiche clairement l'erreur.
 
+---
+# Merci de votre attention
 
+**casa@sweetohm.net**
 
 
 
