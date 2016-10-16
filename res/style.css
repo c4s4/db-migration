@@ -2,7 +2,10 @@
 @import url(font-droid-serif.css);
 @import url(font-ubuntu-mono.css);
 
-body { font-family: 'Droid Serif'; }
+body {
+  font-family: 'Droid Serif';
+  font-size: 14;
+}
 h1, h2, h3 {
   font-family: 'Yanone Kaffeesatz';
   font-weight: normal;
