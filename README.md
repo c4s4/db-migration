@@ -159,9 +159,9 @@ Ainsi, *1*, *02.03.04* et *2.3* seront triés comme suit : *1*, *2.3* puis *02.0
 ---
 # Scripts de plateformes
 
-Les scripts commençant par *all* seront exécutés sur toutes les plateformes, dans l'ordre *lexicographique*, donc *all-10.sql* sera exécutés avant *all-2.sql*. On doit donc numéroter avec des zéros si nécessaire.
+Les scripts commençant par *all* seront exécutés sur toutes les plateformes, dans l'ordre *lexicographique*, donc *all-10-foo.sql* sera exécutés avant *all-2-bar.sql*. On doit donc numéroter avec des zéros si nécessaire.
 
-Les autres scripts seront exécutés sur les plateformes du même nom *après* les scripts *all-xxx.sql*. Le nom des plateformes est libre et listé fans le fichier de configuration.
+Les autres scripts seront exécutés sur les plateformes du même nom *après* les scripts *all-xxx.sql*. Le nom des plateformes est libre et listé dans le fichier de configuration.
 
 Par conséquent si un répertoire de version contient les scripts  *all.sql*, *foo.sql* et *bar.sql*, alors les scripts *all.sql*, puis *foo.sql* seront exécutés pour migrer la plateforme *foo*.
 
@@ -172,7 +172,7 @@ Pour initialiser la base de données en intégration et l'amener à la version *
 
 ```bash
 $ db_migration -i itg 0.1
-on '0.1' on platform 'itg'
+on '0.1' on platform 'localhost'
 Using base 'test' as user 'test'
 Creating meta tables... OK
 Listing passed scripts... OK
@@ -183,7 +183,7 @@ Pour effectuer la migration de la plateforme *itg* vers la version *1.0* :
 
 ```bash
 $ db_migration itg 1.0
-on '1.0' on platform 'itg'
+on '1.0' on platform 'localhost'
 Using base 'test' as user 'test'
 Creating meta tables... OK
 Listing passed scripts... OK
@@ -193,11 +193,11 @@ Running 1 migration scripts... OK
 ---
 # Dry run
 
-On peut voir les scripts passés avec l'option *dry_run* :
+On peut voir les scripts qui seront passés, sans réellement les exécuter, avec l'option *dry_run* (le `-d` sur la ligne de commande) :
 
 ```bash
 $ db_migration -d -i itg 1.0
-Version '1.0' on platform 'itg'
+Version '1.0' on platform 'localhost'
 Using base 'test' as user 'test'
 Creating meta tables... OK
 Listing passed scripts... OK
@@ -212,7 +212,7 @@ Listing passed scripts... OK
 ---
 # Méta données
 
-*db_migration* connait la version installée grâce à deux une table *_install* :
+*db_migration* connait la version installée grâce à une table *_install* :
 
 ```python
 +----+---------+------------------+------------------+---------+
@@ -238,11 +238,11 @@ Listing passed scripts... OK
 ---
 # Développement
 
-Lors du développement, on mettra ses scripts dans un répertoire appelé *next*. Les scripts de ce répertoire sont passés avec l'option `-a` (pour *all*), qui passe tous les scripts de migration.
+Lors du développement, on mettra ses scripts dans un répertoire appelé *next*. Les scripts de ce répertoire sont passés avec l'option `-a` (pour *all*, qui remplace la version), qui passe tous les scripts de migration.
 
 Lorsqu'on effectue une release, on mergera les scripts présents dans le répertoire *next* et on le renommera avec le numéro de la release.
 
-Ainsi, on évite les problèmes des problème de merges sur une ancienne version.
+Ainsi, on évite les problèmes de merges sur une ancienne version.
 
 ---
 # Scripts de migration
@@ -282,9 +282,10 @@ L'utilisation de *db_migration* nécessite un certain nombre de précautions :
 
 En interne, *db_migration* fonctionne de la manière suivante :
 
-- Il sélectionne les répertoires des versions à passer.
-- Il sélectionne les scripts à passer en fonction de la plateforme à installer.
-- Il génère un script de migration par concaténation des scripts de migration.
+- Il interroge la table *_install* pour connaître la version installée.
+- Il sélectionne les répertoires de version à passer.
+- Il sélectionne les scripts à passer dans chaque répertoire en fonction de la plateforme à installer.
+- Il génère le script de migration à passer sur la base par concaténation.
 
 En plus des scripts de migration, *db_migration* ajoute du code SQL pour :
 
@@ -292,12 +293,24 @@ En plus des scripts de migration, *db_migration* ajoute du code SQL pour :
 - Peupler les tables de méta-données.
 
 ---
-# Ce qu'apporte *db_migration*
+# Conclusion
 
 En utilisant *db_migration* :
 
-- On peut migrer *automatiquement* la base de données lors de l'installation d'un logiciel.
-- On peut automatiser le passage des scripts Oracle, sans avoir à vérifier ligne à ligne les logs Oracle
+```python
+On peut migrer automatiquement la base de données lors de l'installation
+d'un logiciel.
+```
+
+En effet, lors de l'installation, on connaît la plateforme et la version, ce qui est suffisant à *db_migration* pour effectuer la migration. Plus besoin alors d'intervention manuelle post-installation pour migrer la base de données.
+
+```python
+On peut automatiser le passage des scripts Oracle, sans avoir à vérifier
+ligne à ligne les logs à la recherche d'éventuelles erreurs.
+```
+
+En effet, Si les scripts de migration contiennent des erreurs, la valeur de retour de *sqlplus* n'est pas nécessairement différente de *0*. Pour être certain qu'il ne s'est produit aucune erreur, il faut donc parcourir tous les logs, *à la main*. *db_migration* le fait pour nous et nous affiche clairement l'erreur.
+
 
 
 
