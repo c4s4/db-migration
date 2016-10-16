@@ -315,18 +315,3 @@ En effet, Si les scripts de migration contiennent des erreurs, la valeur de reto
 # Merci de votre attention
 
 **casa@sweetohm.net**
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
