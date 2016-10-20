@@ -299,7 +299,7 @@ En interne, *db_migration* fonctionne de la manière suivante :
 
 En plus des scripts de migration, *db_migration* ajoute du code SQL pour :
 
-- Commmiter après le passage d'un script.
+- Commiter après le passage d'un script.
 - Peupler les tables de méta-données.
 
 ---
