@@ -22,7 +22,7 @@ Entendu il y a encore un an :
 
 ```python
 - La base Oracle de test a crashé, ils ont perdu toutes les
-  données de test. Tous leurs tests sont inutilisables maintenant.
+  données. Tous leurs tests sont inutilisables maintenant.
 ```
 
 Entendu il y a 4 ans en arrivant sur un projet :
@@ -31,6 +31,8 @@ Entendu il y a 4 ans en arrivant sur un projet :
 - Comment on va faire la mise en production de la base de données ?
 - On fera un dump de la pré-production.
 ```
+
+![](img/silex.png)
 
 ---
 # Le degré Zéro
@@ -57,6 +59,8 @@ Lorsqu'on veut gérer sérieusement les données d'une base, on comprend rapidem
 D'autre part, pour pouvoir faire évoluer le schéma en production sans perdre de données, il ne faut écrire que des scripts de migration du schéma. On ne doit pas redéfinir une table existante, on doit la faire évoluer.
 
 C'est souvent la situation dans laquelle se trouvent la plupart des projets.
+
+![](img/epee.png)
 
 ---
 # Organisation des scripts
@@ -87,6 +91,8 @@ La solution du script *main.sql*, qui appelle tous les autres scripts, est la pl
 - On ne peut passer des scripts pour une plateforme spécifique.
 - On doit écrire un script *main.sql* spécifique pour toute migration.
 
+![](img/shadoks.png)
+
 ---
 # Contraintes
 
@@ -111,6 +117,8 @@ Les exploitants des plateformes ont l'habitude de passer les scripts avec les ou
 Par conséquent, pour limiter les risques d'incompatibilité, il faudrait que cette application appelle ces outils en ligne de commande.
 
 Il est alors possible de revenir à la solution manuelle sans modifier les scripts existants. Il est aussi possible d'automatiser la migration sur les plateformes de développement et de garder la solution manuelle en production.
+
+![](img/main.png)
 
 ---
 # DB Migration
@@ -277,6 +285,8 @@ L'utilisation de *db_migration* nécessite un certain nombre de précautions :
 - Il ne faut **jamais** modifier un script d'une version antérieure.
 - Il faut prendre garde à ne pas laisser de commentaire ouvert en fin de script (`/*`).
 
+![](img/attention.png)
+
 ---
 # Fonctionnement interne
 
@@ -313,5 +323,7 @@ En effet, Si les scripts de migration contiennent des erreurs, la valeur de reto
 
 ---
 # Merci de votre attention
+
+# Des questions ?
 
 **casa@sweetohm.net**
