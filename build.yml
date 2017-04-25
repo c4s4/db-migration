@@ -7,6 +7,7 @@ properties:
   BUILD_DIR:   'build'
   TITLE:       'Migration de Base de Données'
   DESTINATION: '/home/web/slides/db-migration'
+  OPTIONS:     '{ratio: "4:3"}'
 
 targets:
 
@@ -21,6 +22,9 @@ targets:
     - mkdir: '#{BUILD_DIR}'
     - copy: 'res/template.html'
       to:   '#{BUILD_DIR}/index.html'
+    - replace: '#{BUILD_DIR}/index.html'
+      pattern: '<? OPTIONS ?>'
+      with:    '#{OPTIONS}'
     - replace: '#{BUILD_DIR}/index.html'
       pattern: '<? TITLE ?>'
       with:    '#{TITLE}'
