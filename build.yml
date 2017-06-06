@@ -1,44 +1,6 @@
-default:
-- clean
-- slides
-- publish
+# NeON build file (http://github.com/c4s4/neon)
+
+extends: c4s4/build/slides.yml
 
 properties:
-  BUILD_DIR:   'build'
   TITLE:       'Migration de Base de Données'
-  DESTINATION: '/home/web/slides/db-migration'
-  OPTIONS:     '{ratio: "4:3"}'
-
-targets:
-
-  clean:
-    doc: 'Delete generated files'
-    steps:
-    - delete: '#{BUILD_DIR}'
-
-  slides:
-    doc: 'Generate slides'
-    steps:
-    - mkdir: '#{BUILD_DIR}'
-    - copy: 'res/template.html'
-      to:   '#{BUILD_DIR}/index.html'
-    - replace: '#{BUILD_DIR}/index.html'
-      pattern: '<? OPTIONS ?>'
-      with:    '#{OPTIONS}'
-    - replace: '#{BUILD_DIR}/index.html'
-      pattern: '<? TITLE ?>'
-      with:    '#{TITLE}'
-    - read: 'README.md'
-      to:   'content'
-    - replace: '#{BUILD_DIR}/index.html'
-      pattern: '<? CONTENT ?>'
-      with:    '#{content}'
-    - copy:  ['res/**/*', 'img/**/*']
-      todir: '#{BUILD_DIR}'
-      flat:  false
-
-  publish:
-    doc: 'Publish slides'
-    depends: slides
-    steps:
-    - 'rsync -av "#{BUILD_DIR}/" "#{DESTINATION}/"'
